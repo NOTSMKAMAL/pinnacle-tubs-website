@@ -1,7 +1,12 @@
 import Link from "next/link";
 
-export function Footer() {
-  const currentYear = new Date().getFullYear();
+async function getCurrentYear() {
+  "use cache";
+  return new Date().getFullYear();
+}
+
+export async function Footer() {
+  const currentYear = await getCurrentYear();
 
   return (
     <footer className="w-full border-t bg-muted/50 mt-auto">
