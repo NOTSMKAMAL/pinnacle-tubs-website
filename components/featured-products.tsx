@@ -1,81 +1,71 @@
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+"use client";
 
-export function FeaturedProducts() {
-  const features = [
-    {
-      title: "Premium Quality",
-      description:
-        "Built with the finest materials and expert craftsmanship for lasting durability.",
-      icon: "⭐",
-    },
-    {
-      title: "Energy Efficient",
-      description:
-        "Advanced insulation technology keeps your operating costs low year-round.",
-      icon: "⚡",
-    },
-    {
-      title: "Therapeutic Jets",
-      description:
-        "Customizable hydrotherapy jets target specific muscle groups for relief.",
-      icon: "💆",
-    },
-    {
-      title: "Easy Maintenance",
-      description:
-        "Simple care routines and quality components make upkeep a breeze.",
-      icon: "🔧",
-    },
-  ];
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(ScrollTrigger);
+
+export default function FeaturedProducts() {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useGSAP(() => {
+    gsap.set(".first-vd-wrapper", { marginTop: "-150vh", opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".first-vd-wrapper",
+        start: "top top",
+        end: "+=200% top",
+        scrub: true,
+        pin: true,
+      },
+    });
+
+    tl.to(".hero-section", { delay: 0.5, opacity: 0, ease: "power1.inOut" });
+    tl.to(".first-vd-wrapper", { opacity: 1, duration: 2, ease: "power1.inOut" });
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onLoadedMetadata = () => {
+      try {
+        video.currentTime = 0;
+      } catch {}
+
+      tl.to(
+        video,
+        {
+          currentTime: video.duration || 0,
+          duration: 3,
+          ease: "power1.inOut",
+        },
+        "<"
+      );
+    };
+
+    if (video.readyState >= 1) onLoadedMetadata();
+    else video.addEventListener("loadedmetadata", onLoadedMetadata);
+
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
+    };
+  }, []);
 
   return (
-    <section className="w-full py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Why Choose Pinnacle Tubs?
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We&apos;re committed to delivering exceptional quality, comfort, and
-            value in every hot tub we offer.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {features.map((feature, index) => (
-            <Card key={index} className="text-center">
-              <CardHeader>
-                <div className="text-4xl mb-2">{feature.icon}</div>
-                <CardTitle>{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{feature.description}</CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="bg-primary text-primary-foreground rounded-lg p-8 md:p-12 text-center">
-          <h3 className="text-3xl font-bold mb-4">Ready to Get Started?</h3>
-          <p className="text-lg mb-6 opacity-90">
-            Visit our showroom to see our collection in person and find the
-            perfect hot tub for your home.
-          </p>
-          <Link
-            href="/contact"
-            className="inline-block bg-background text-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
-          >
-            Contact Us Today
-          </Link>
-        </div>
+    <section className="first-vd-wrapper">
+      <div className="h-dvh">
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          preload="auto"
+          src="/videos/EX_VID_FEAT.mp4"
+          className="first-vd"
+        />
       </div>
     </section>
   );
 }
+
