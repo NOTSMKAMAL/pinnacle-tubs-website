@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/all';
 
 import { Navigation } from "@/components/navigation";
 import { HeroSection } from "@/components/hero-section";
-import { FeaturedProducts } from "@/components/featured-products";
+import FeaturedProducts from "@/components/featured-products";
 import { Footer } from "@/components/footer";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -15,6 +15,7 @@ export default function Home() {
       <Navigation />
       <HeroSection />
       <FeaturedProducts />
+      
       <Suspense fallback={null}>
         <Footer />
       </Suspense>
