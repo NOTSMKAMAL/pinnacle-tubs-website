@@ -13,35 +13,32 @@ export default function FeaturedProducts() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useGSAP(() => {
-    gsap.set(".first-vd-wrapper", { y: "-150vh", opacity: 0 });
+    // ✅ Same as the reference code
+    gsap.set(".first-vd-wrapper", { marginTop: "-150vh", opacity: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".first-vd-wrapper",
         start: "top top",
-        end: "+=200% top",
-        scrub: true,
+        end: "+=300%",
+        scrub: 6,
         pin: true,
+       // markers: true, //
       },
     });
 
-    tl.to(".first-vd-wrapper", { y: "0vh", duration: 1, ease: "power1.inOut" });
-    tl.to(".first-vd-wrapper", { opacity: 1, duration: 1, ease: "power1.inOut" }, "<");
+    tl.to(".hero-section", { delay: 0.2, opacity: 0, ease: "none" });
+    tl.to(".first-vd-wrapper", { opacity: 1.5, duration: 20, ease: "none" });
 
     const video = videoRef.current;
     if (!video) return;
 
     const onLoadedMetadata = () => {
-      // keep it consistent on refresh/hot-reload
-      try {
-        video.currentTime = 0;
-      } catch {}
-
       tl.to(
         video,
         {
-          currentTime: video.duration || 0,
-          duration: 3,
+          currentTime: video.duration,
+          duration: 20,
           ease: "power1.inOut",
         },
         "<"
@@ -60,7 +57,7 @@ export default function FeaturedProducts() {
 
   return (
     <section className="first-vd-wrapper relative h-[100svh] w-full overflow-hidden">
-      <div className="h-dvh">
+      <div className="h-[100svh] w-full">
         <video
           ref={videoRef}
           muted
@@ -68,7 +65,7 @@ export default function FeaturedProducts() {
           preload="auto"
           className="first-vd h-full w-full object-cover"
         >
-          <source src="/videos/EX_VID_FEAT.mp4" type="video/mp4" />
+          <source src="/videos/output1.mp4" type="video/mp4" />
         </video>
       </div>
     </section>
